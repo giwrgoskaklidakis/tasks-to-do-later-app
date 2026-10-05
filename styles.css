@@ -12,7 +12,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #15131d;
     --surface: #211e2e;
     --text: #efedf7;
@@ -23,7 +23,22 @@
     --done-bg: #1a1826;
     --danger: #ff7a7a;
     --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #15131d;
+  --surface: #211e2e;
+  --text: #efedf7;
+  --text-muted: #a39db3;
+  --border: #322d44;
+  --accent: #8d7bf0;
+  --accent-contrast: #15131d;
+  --done-bg: #1a1826;
+  --danger: #ff7a7a;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
 }
 
 * {
@@ -271,6 +286,13 @@ textarea {
 
 .icon-btn:hover {
   background: var(--bg);
+}
+
+.armed {
+  color: var(--danger);
+  border-color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .empty-state {

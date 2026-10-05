@@ -187,13 +187,35 @@
       });
     });
 
-    deleteBtn.addEventListener("click", () => {
-      if (confirm(`Delete "${task.title}"?`)) {
-        deleteTask(task.id);
-      }
-    });
+    deleteBtn.addEventListener("click", () =>
+      confirmByDoubleTap(deleteBtn, "Delete?", () => deleteTask(task.id))
+    );
 
     return node;
+  }
+
+  // Native confirm() is blocked in some embedded views, so ask for a second tap instead.
+  function confirmByDoubleTap(btn, prompt, onConfirm) {
+    if (btn.dataset.armed === "1") {
+      clearTimeout(Number(btn.dataset.timer));
+      btn.dataset.armed = "";
+      btn.classList.remove("armed");
+      btn.innerHTML = btn.dataset.original;
+      onConfirm();
+      return;
+    }
+    const original = btn.innerHTML;
+    btn.dataset.original = original;
+    btn.dataset.armed = "1";
+    btn.classList.add("armed");
+    btn.textContent = prompt;
+    btn.dataset.timer = String(
+      setTimeout(() => {
+        btn.dataset.armed = "";
+        btn.classList.remove("armed");
+        btn.innerHTML = original;
+      }, 3000)
+    );
   }
 
   function addTask({ title, link, category, note }) {
@@ -236,10 +258,11 @@
   function clearDone() {
     const doneCount = tasks.filter((t) => t.done).length;
     if (doneCount === 0) return;
-    if (!confirm(`Delete ${doneCount} completed item(s)?`)) return;
-    tasks = tasks.filter((t) => !t.done);
-    saveTasks(tasks);
-    render();
+    confirmByDoubleTap(els.clearDoneBtn, `Delete ${doneCount} done item(s)?`, () => {
+      tasks = tasks.filter((t) => !t.done);
+      saveTasks(tasks);
+      render();
+    });
   }
 
   els.form.addEventListener("submit", (e) => {
