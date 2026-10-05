@@ -41,6 +41,56 @@
 
   let tasks = loadTasks();
 
+  // When hosted on claude.ai, keep tasks in the viewer's private db subtree;
+  // elsewhere (GitHub Pages, local file) localStorage is the only store.
+  let cloud = null;
+
+  async function connectCloud() {
+    if (!window.claude || typeof window.claude.use !== "function") return;
+    const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+    const uid = user ? await user.id() : null;
+    if (!db || !uid) return;
+    cloud = db.collection("data/users/" + uid);
+
+    let first = true;
+    cloud.onSnapshot(
+      async (snap) => {
+        if (first && !snap.metadata.fromCache) {
+          first = false;
+          if (snap.empty && tasks.length) {
+            for (const t of tasks) await cloudPut(t);
+            return;
+          }
+        }
+        tasks = snap.docs.map((d) => ({ ...d.data(), id: d.id }));
+        saveTasks(tasks);
+        render();
+      },
+      () => {
+        cloud = null;
+      }
+    );
+  }
+
+  async function cloudPut(task) {
+    if (!cloud) return;
+    const { id, ...body } = task;
+    try {
+      await cloud.doc(id).set(body);
+    } catch (e) {
+      console.error("Save failed", e);
+    }
+  }
+
+  async function cloudDelete(id) {
+    if (!cloud) return;
+    try {
+      await cloud.doc(id).delete();
+    } catch (e) {
+      console.error("Delete failed", e);
+    }
+  }
+
   function makeId() {
     if (window.crypto && typeof window.crypto.randomUUID === "function") {
       return window.crypto.randomUUID();
@@ -160,7 +210,13 @@
     const editCategory = node.querySelector(".edit-category");
     const editNote = node.querySelector(".edit-note");
 
+    node.querySelector(".task-title-row").addEventListener("click", () => editBtn.click());
+
     editBtn.addEventListener("click", () => {
+      if (!editPanel.hidden) {
+        editPanel.hidden = true;
+        return;
+      }
       editTitle.value = task.title;
       editLink.value = task.link || "";
       editCategory.value = task.category || "";
@@ -219,7 +275,7 @@
   }
 
   function addTask({ title, link, category, note }) {
-    tasks.unshift({
+    const task = {
       id: makeId(),
       title,
       link: link || "",
@@ -228,40 +284,41 @@
       done: false,
       createdAt: new Date().toISOString(),
       doneAt: null,
-    });
+    };
+    tasks.unshift(task);
     saveTasks(tasks);
     render();
+    cloudPut(task);
+    return task.id;
   }
 
   function updateTask(id, patch) {
     tasks = tasks.map((t) => (t.id === id ? { ...t, ...patch } : t));
     saveTasks(tasks);
     render();
+    cloudPut(tasks.find((t) => t.id === id));
   }
 
   function toggleDone(id) {
-    tasks = tasks.map((t) =>
-      t.id === id
-        ? { ...t, done: !t.done, doneAt: !t.done ? new Date().toISOString() : null }
-        : t
-    );
-    saveTasks(tasks);
-    render();
+    const t = tasks.find((x) => x.id === id);
+    updateTask(id, { done: !t.done, doneAt: !t.done ? new Date().toISOString() : null });
   }
 
   function deleteTask(id) {
     tasks = tasks.filter((t) => t.id !== id);
     saveTasks(tasks);
     render();
+    cloudDelete(id);
   }
 
   function clearDone() {
-    const doneCount = tasks.filter((t) => t.done).length;
-    if (doneCount === 0) return;
-    confirmByDoubleTap(els.clearDoneBtn, `Delete ${doneCount} done item(s)?`, () => {
+    const doneIds = tasks.filter((t) => t.done).map((t) => t.id);
+    if (doneIds.length === 0) return;
+    confirmByDoubleTap(els.clearDoneBtn, `Delete ${doneIds.length} done item(s)?`, async () => {
       tasks = tasks.filter((t) => !t.done);
       saveTasks(tasks);
       render();
+      for (const id of doneIds) await cloudDelete(id);
     });
   }
 
@@ -269,14 +326,23 @@
     e.preventDefault();
     const title = els.titleInput.value.trim();
     if (!title) return;
-    addTask({
+    els.searchInput.value = "";
+    els.categoryFilter.value = "";
+    if (els.statusFilter.value === "done") els.statusFilter.value = "active";
+    const id = addTask({
       title,
       link: els.linkInput.value.trim(),
       category: els.categoryInput.value.trim(),
       note: els.noteInput.value.trim(),
     });
     els.form.reset();
-    els.titleInput.focus();
+    // Close the phone keyboard so the new item isn't hidden behind it.
+    if (document.activeElement) document.activeElement.blur();
+    const added = els.taskList.querySelector(`[data-id="${id}"]`);
+    if (added) {
+      added.classList.add("just-added");
+      added.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   });
 
   els.clearDoneBtn.addEventListener("click", clearDone);
@@ -287,4 +353,5 @@
 
   els.statusFilter.value = "active";
   render();
+  connectCloud().catch((e) => console.error("Cloud sync unavailable", e));
 })();

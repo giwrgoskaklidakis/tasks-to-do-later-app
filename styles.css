@@ -288,6 +288,22 @@ textarea {
   background: var(--bg);
 }
 
+.task-title-row {
+  cursor: pointer;
+}
+
+.task.just-added {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+  transition: box-shadow 1.5s ease, border-color 1.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task.just-added {
+    transition: none;
+  }
+}
+
 .armed {
   color: var(--danger);
   border-color: var(--danger);
