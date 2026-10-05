@@ -1,7 +1,7 @@
 {
-  "name": "Για Αργότερα",
-  "short_name": "Για Αργότερα",
-  "description": "Αποθήκευσε σκέψεις, άρθρα και πράγματα που πρέπει να κάνεις αργότερα.",
+  "name": "Later",
+  "short_name": "Later",
+  "description": "Save thoughts, articles and things to do later.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

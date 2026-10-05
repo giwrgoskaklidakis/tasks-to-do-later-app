@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="el">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Για Αργότερα</title>
-<meta name="description" content="Αποθήκευσε σκέψεις, άρθρα και πράγματα που πρέπει να κάνεις αργότερα." />
+<title>Later</title>
+<meta name="description" content="Save thoughts, articles and things to do later." />
 <meta name="theme-color" content="#6c5ce7" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>" />
@@ -13,45 +13,45 @@
 <body>
 <div class="app">
   <header class="topbar">
-    <h1>📝 Για Αργότερα</h1>
-    <p class="subtitle">Σημείωσε το τώρα, θυμήσου το όταν μπορέσεις.</p>
+    <h1>📝 Later</h1>
+    <p class="subtitle">Jot it down now, get to it when you can.</p>
   </header>
 
   <form id="add-form" class="add-form" autocomplete="off">
-    <input type="text" id="title-input" placeholder="Τι θες να θυμηθείς; (π.χ. 'Άρθρο για βενζοδιαζεπίνες')" required maxlength="200" />
+    <input type="text" id="title-input" placeholder="What do you want to remember? (e.g. 'Article on benzodiazepines')" required maxlength="200" />
     <div class="add-form-row">
-      <input type="url" id="link-input" placeholder="Σύνδεσμος (προαιρετικό)" />
-      <input type="text" id="category-input" list="category-options" placeholder="Κατηγορία" />
+      <input type="url" id="link-input" placeholder="Link (optional)" />
+      <input type="text" id="category-input" list="category-options" placeholder="Category" />
       <datalist id="category-options"></datalist>
     </div>
-    <textarea id="note-input" placeholder="Σημείωση (προαιρετικό)" rows="2" maxlength="2000"></textarea>
-    <button type="submit" class="btn-primary">➕ Αποθήκευση</button>
+    <textarea id="note-input" placeholder="Note (optional)" rows="2" maxlength="2000"></textarea>
+    <button type="submit" class="btn-primary">➕ Save</button>
   </form>
 
   <section class="filters">
-    <input type="search" id="search-input" placeholder="🔎 Αναζήτηση..." />
+    <input type="search" id="search-input" placeholder="🔎 Search..." />
     <select id="status-filter">
-      <option value="active">Σε εκκρεμότητα</option>
-      <option value="all">Όλα</option>
-      <option value="done">Ολοκληρωμένα</option>
+      <option value="active">Pending</option>
+      <option value="all">All</option>
+      <option value="done">Done</option>
     </select>
     <select id="category-filter">
-      <option value="">Όλες οι κατηγορίες</option>
+      <option value="">All categories</option>
     </select>
     <select id="sort-select">
-      <option value="new">Νεότερα πρώτα</option>
-      <option value="old">Παλαιότερα πρώτα</option>
+      <option value="new">Newest first</option>
+      <option value="old">Oldest first</option>
     </select>
   </section>
 
   <section class="list-header">
     <span id="count-label"></span>
-    <button id="clear-done-btn" class="btn-ghost" type="button">🧹 Καθαρισμός ολοκληρωμένων</button>
+    <button id="clear-done-btn" class="btn-ghost" type="button">🧹 Clear done</button>
   </section>
 
   <ul id="task-list" class="task-list"></ul>
 
-  <p id="empty-state" class="empty-state" hidden>Δεν υπάρχει τίποτα εδώ. Πρόσθεσε κάτι από πάνω! ✨</p>
+  <p id="empty-state" class="empty-state" hidden>Nothing here yet. Add something above! ✨</p>
 </div>
 
 <template id="task-template">
@@ -65,24 +65,24 @@
         <span class="task-category"></span>
       </div>
       <p class="task-note"></p>
-      <a class="task-link" target="_blank" rel="noopener noreferrer">🔗 Άνοιγμα συνδέσμου</a>
+      <a class="task-link" target="_blank" rel="noopener noreferrer">🔗 Open link</a>
       <div class="task-meta">
         <span class="task-date"></span>
       </div>
       <div class="task-edit" hidden>
         <input type="text" class="edit-title" maxlength="200" />
-        <input type="url" class="edit-link" placeholder="Σύνδεσμος" />
-        <input type="text" class="edit-category" placeholder="Κατηγορία" />
-        <textarea class="edit-note" placeholder="Σημείωση" rows="2" maxlength="2000"></textarea>
+        <input type="url" class="edit-link" placeholder="Link" />
+        <input type="text" class="edit-category" placeholder="Category" />
+        <textarea class="edit-note" placeholder="Note" rows="2" maxlength="2000"></textarea>
         <div class="edit-actions">
-          <button type="button" class="btn-primary save-edit-btn">Αποθήκευση</button>
-          <button type="button" class="btn-ghost cancel-edit-btn">Άκυρο</button>
+          <button type="button" class="btn-primary save-edit-btn">Save</button>
+          <button type="button" class="btn-ghost cancel-edit-btn">Cancel</button>
         </div>
       </div>
     </div>
     <div class="task-actions">
-      <button type="button" class="icon-btn edit-btn" title="Επεξεργασία">✏️</button>
-      <button type="button" class="icon-btn delete-btn" title="Διαγραφή">🗑️</button>
+      <button type="button" class="icon-btn edit-btn" title="Edit">✏️</button>
+      <button type="button" class="icon-btn delete-btn" title="Delete">🗑️</button>
     </div>
   </li>
 </template>

@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "ttdl-tasks-v1";
-  const DEFAULT_CATEGORIES = ["Διάβασμα", "Τηλεφώνημα", "Εργασία", "Ιδέα", "Άλλο"];
+  const DEFAULT_CATEGORIES = ["Read", "Call", "Task", "Idea", "Other"];
 
   const els = {
     form: document.getElementById("add-form"),
@@ -50,7 +50,7 @@
 
   function formatDate(iso) {
     const d = new Date(iso);
-    return d.toLocaleString("el-GR", {
+    return d.toLocaleString("en-GB", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -73,7 +73,7 @@
 
     const currentFilter = els.categoryFilter.value;
     els.categoryFilter.innerHTML =
-      '<option value="">Όλες οι κατηγορίες</option>' +
+      '<option value="">All categories</option>' +
       cats.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
     if (cats.includes(currentFilter)) {
       els.categoryFilter.value = currentFilter;
@@ -124,7 +124,7 @@
 
     const total = tasks.length;
     const activeCount = tasks.filter((t) => !t.done).length;
-    els.countLabel.textContent = `${activeCount} σε εκκρεμότητα · ${total} σύνολο`;
+    els.countLabel.textContent = `${activeCount} pending · ${total} total`;
   }
 
   function buildTaskElement(task) {
@@ -149,8 +149,8 @@
     }
 
     node.querySelector(".task-date").textContent = task.done
-      ? `Ολοκληρώθηκε: ${formatDate(task.doneAt)}`
-      : `Προστέθηκε: ${formatDate(task.createdAt)}`;
+      ? `Done: ${formatDate(task.doneAt)}`
+      : `Added: ${formatDate(task.createdAt)}`;
 
     const editBtn = node.querySelector(".edit-btn");
     const deleteBtn = node.querySelector(".delete-btn");
@@ -188,7 +188,7 @@
     });
 
     deleteBtn.addEventListener("click", () => {
-      if (confirm(`Διαγραφή "${task.title}";`)) {
+      if (confirm(`Delete "${task.title}"?`)) {
         deleteTask(task.id);
       }
     });
@@ -236,7 +236,7 @@
   function clearDone() {
     const doneCount = tasks.filter((t) => t.done).length;
     if (doneCount === 0) return;
-    if (!confirm(`Διαγραφή ${doneCount} ολοκληρωμένων εγγραφών;`)) return;
+    if (!confirm(`Delete ${doneCount} completed item(s)?`)) return;
     tasks = tasks.filter((t) => !t.done);
     saveTasks(tasks);
     render();

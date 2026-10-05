@@ -1,34 +1,32 @@
-# Για Αργότερα (tasks-to-do-later-app)
+# Later (tasks-to-do-later-app)
 
-Μια πολύ απλή εφαρμογή για να αποθηκεύεις σκέψεις, άρθρα και πράγματα που θέλεις να κάνεις ή να δεις αργότερα — π.χ. ένα άρθρο που βρήκες και θες να διαβάσεις, ένα τηλεφώνημα που πρέπει να κάνεις, ή οποιαδήποτε άλλη υπενθύμιση.
+A tiny app for saving thoughts, articles and things you want to do or check later — e.g. an article you found and want to read, a phone call you need to make, or any other reminder.
 
-Χωρίς λογαριασμό, χωρίς server: τα δεδομένα αποθηκεύονται τοπικά στον browser σου (`localStorage`).
+No account, no server: everything is stored locally in your browser (`localStorage`).
 
-## Χρήση online
+## Live app
 
-Μόλις ενεργοποιηθεί το GitHub Pages για αυτό το repository (Settings → Pages → Source: "GitHub Actions"), η εφαρμογή θα είναι διαθέσιμη στο:
-
-```
 https://giwrgoskaklidakis.github.io/tasks-to-do-later-app/
-```
 
-## Λειτουργίες
+Deployed automatically to GitHub Pages on every push to `main` (requires Settings → Pages → Source: "GitHub Actions").
 
-- Προσθήκη σημείωσης με τίτλο, προαιρετικό σύνδεσμο, κατηγορία και σημείωση.
-- Σήμανση ως ολοκληρωμένο / ενεργό.
-- Επεξεργασία και διαγραφή εγγραφών.
-- Φιλτράρισμα κατά κατάσταση (ενεργά/ολοκληρωμένα), κατηγορία και αναζήτηση κειμένου.
-- Ταξινόμηση κατά ημερομηνία.
-- Καθαρισμός όλων των ολοκληρωμένων με ένα κλικ.
+## Features
 
-## Τοπική εκτέλεση
+- Add an item with a title, optional link, category and note.
+- Mark items as done / pending.
+- Edit and delete items.
+- Filter by status, category and free-text search.
+- Sort by date.
+- Clear all completed items in one click.
 
-Δεν χρειάζεται build. Απλά άνοιξε το `index.html` σε browser, ή τρέξε έναν τοπικό server:
+## Run locally
+
+No build step. Open `index.html` in a browser, or serve the folder:
 
 ```bash
 npx serve .
 ```
 
-## Τεχνολογίες
+## Tech
 
-Απλή στατική εφαρμογή (HTML/CSS/JavaScript), χωρίς εξαρτήσεις.
+Plain static HTML/CSS/JavaScript, no dependencies.
