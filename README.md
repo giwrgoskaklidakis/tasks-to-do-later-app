@@ -19,21 +19,9 @@ Deployed automatically to GitHub Pages on every push to `main` (requires Setting
 - Sort by date.
 - Clear all completed items in one click.
 
-## Fast — fasting tracker (`fasting/`)
-
-A second app in this repo for tracking intermittent fasts: https://giwrgoskaklidakis.github.io/tasks-to-do-later-app/fasting/
-
-- One-tap start / end, with a live progress ring toward your goal.
-- Goal presets (13:11, 14:10, 16:8, 18:6, 20:4, 24h, 36h) or a custom number of hours.
-- Fix the start time if you forgot to start the timer.
-- Rough fasting-stage hints (general guidance, not medical advice).
-- Stats: number of fasts, day streak, average, longest, goal hit rate, and a last-7-days chart.
-- History with edit and delete.
-- Stored in `localStorage`; synced per user when hosted on claude.ai, same as Later.
-
 ## Run locally
 
-No build step. Open `index.html` (or `fasting/index.html`) in a browser, or serve the folder:
+No build step. Open `index.html` in a browser, or serve the folder:
 
 ```bash
 npx serve .
