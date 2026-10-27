@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Fast</title>
+<meta name="description" content="Track your intermittent fasts." />
+<meta name="theme-color" content="#0f9d8a" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏳</text></svg>" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <h1>⏳ Fast</h1>
+    <p class="subtitle">Start the clock, stay the course.</p>
+  </header>
+
+  <section class="card timer-card">
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="ring-track" cx="60" cy="60" r="52" />
+        <circle id="ring-progress" class="ring-progress" cx="60" cy="60" r="52" />
+      </svg>
+      <div class="ring-center">
+        <span id="timer-label" class="timer-label">Ready to fast</span>
+        <span id="timer-value" class="timer-value">00:00:00</span>
+        <span id="timer-sub" class="timer-sub"></span>
+      </div>
+    </div>
+
+    <p id="stage-label" class="stage-label" hidden></p>
+
+    <div class="goal-row">
+      <label for="goal-select">Goal</label>
+      <select id="goal-select">
+        <option value="13">13:11</option>
+        <option value="14">14:10</option>
+        <option value="16">16:8</option>
+        <option value="18">18:6</option>
+        <option value="20">20:4</option>
+        <option value="24">24 h</option>
+        <option value="36">36 h</option>
+        <option value="custom">Custom…</option>
+      </select>
+      <input type="number" id="goal-custom" min="1" max="168" step="1" placeholder="Hours" hidden />
+    </div>
+
+    <div id="active-times" class="active-times" hidden>
+      <label>
+        <span>Started</span>
+        <input type="datetime-local" id="start-input" />
+      </label>
+      <div class="end-at">
+        <span>Goal at</span>
+        <strong id="goal-at"></strong>
+      </div>
+    </div>
+
+    <button id="toggle-btn" type="button" class="btn-primary btn-big">▶ Start fast</button>
+  </section>
+
+  <section class="card">
+    <h2>Stats</h2>
+    <div class="stats">
+      <div class="stat"><span id="stat-count" class="stat-value">0</span><span class="stat-label">Fasts</span></div>
+      <div class="stat"><span id="stat-streak" class="stat-value">0</span><span class="stat-label">Day streak</span></div>
+      <div class="stat"><span id="stat-avg" class="stat-value">–</span><span class="stat-label">Average</span></div>
+      <div class="stat"><span id="stat-longest" class="stat-value">–</span><span class="stat-label">Longest</span></div>
+      <div class="stat"><span id="stat-rate" class="stat-value">–</span><span class="stat-label">Goal hit</span></div>
+    </div>
+    <h3>Last 7 days</h3>
+    <div id="week-chart" class="week-chart"></div>
+  </section>
+
+  <section class="list-header">
+    <h2>History</h2>
+  </section>
+
+  <ul id="fast-list" class="fast-list"></ul>
+
+  <p id="empty-state" class="empty-state" hidden>No finished fasts yet. Your first one will show up here.</p>
+
+  <p class="disclaimer">Stages are rough general guides, not medical advice. Check with a doctor before long fasts.</p>
+</div>
+
+<template id="fast-template">
+  <li class="fast" data-id="">
+    <div class="fast-body">
+      <div class="fast-title-row">
+        <span class="fast-duration"></span>
+        <span class="fast-badge"></span>
+      </div>
+      <div class="fast-meta"></div>
+      <div class="fast-edit" hidden>
+        <label><span>Start</span><input type="datetime-local" class="edit-start" /></label>
+        <label><span>End</span><input type="datetime-local" class="edit-end" /></label>
+        <label><span>Goal (h)</span><input type="number" class="edit-goal" min="1" max="168" /></label>
+        <div class="edit-actions">
+          <button type="button" class="btn-primary save-edit-btn">Save</button>
+          <button type="button" class="btn-ghost cancel-edit-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div class="fast-actions">
+      <button type="button" class="icon-btn edit-btn" title="Edit">✏️</button>
+      <button type="button" class="icon-btn delete-btn" title="Delete">🗑️</button>
+    </div>
+  </li>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>

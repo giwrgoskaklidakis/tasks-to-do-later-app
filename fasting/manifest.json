@@ -1,0 +1,11 @@
+{
+  "name": "Fast",
+  "short_name": "Fast",
+  "description": "Track your intermittent fasts.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f8f7",
+  "theme_color": "#0f9d8a",
+  "icons": []
+}
