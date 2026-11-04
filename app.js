@@ -2,15 +2,17 @@
   "use strict";
 
   const STORAGE_KEY = "ttdl-tasks-v1";
-  const DEFAULT_CATEGORIES = ["Read", "Call", "Task", "Idea", "Other"];
+  // Only shown while no task uses a category yet (e.g. a fresh install).
+  const STARTER_CATEGORIES = ["Read", "Task", "Idea"];
+  const NEW_CATEGORY = "__new__";
 
   const els = {
     form: document.getElementById("add-form"),
     titleInput: document.getElementById("title-input"),
     linkInput: document.getElementById("link-input"),
+    categorySelect: document.getElementById("category-select"),
     categoryInput: document.getElementById("category-input"),
     noteInput: document.getElementById("note-input"),
-    categoryOptions: document.getElementById("category-options"),
     categoryFilter: document.getElementById("category-filter"),
     statusFilter: document.getElementById("status-filter"),
     sortSelect: document.getElementById("sort-select"),
@@ -109,17 +111,52 @@
     });
   }
 
+  // Categories exist only while at least one task uses them.
   function allCategories() {
-    const fromTasks = tasks.map((t) => t.category).filter(Boolean);
-    return Array.from(new Set([...DEFAULT_CATEGORIES, ...fromTasks]));
+    const used = Array.from(new Set(tasks.map((t) => t.category).filter(Boolean))).sort((a, b) =>
+      a.localeCompare(b)
+    );
+    return used.length ? used : STARTER_CATEGORIES;
+  }
+
+  function categoryOptionsHtml(cats) {
+    return (
+      '<option value="">No category</option>' +
+      cats.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("") +
+      `<option value="${NEW_CATEGORY}">＋ New category…</option>`
+    );
+  }
+
+  // Fill a category dropdown, keeping the current choice if it is still available.
+  function fillCategorySelect(select, cats, selected) {
+    const keep = selected !== undefined ? selected : select.value;
+    select.innerHTML = categoryOptionsHtml(cats);
+    select.value = keep === NEW_CATEGORY || cats.includes(keep) ? keep : "";
+  }
+
+  // The text box is only needed while "New category…" is chosen.
+  function syncNewCategoryInput(select, input) {
+    const isNew = select.value === NEW_CATEGORY;
+    input.hidden = !isNew;
+    if (!isNew) input.value = "";
+  }
+
+  function readCategory(select, input) {
+    return select.value === NEW_CATEGORY ? input.value.trim() : select.value;
+  }
+
+  function wireCategoryPicker(select, input) {
+    select.addEventListener("change", () => {
+      syncNewCategoryInput(select, input);
+      if (select.value === NEW_CATEGORY) input.focus();
+    });
   }
 
   function refreshCategoryOptions() {
     const cats = allCategories();
 
-    els.categoryOptions.innerHTML = cats
-      .map((c) => `<option value="${escapeHtml(c)}"></option>`)
-      .join("");
+    fillCategorySelect(els.categorySelect, cats);
+    syncNewCategoryInput(els.categorySelect, els.categoryInput);
 
     const currentFilter = els.categoryFilter.value;
     els.categoryFilter.innerHTML =
@@ -207,8 +244,11 @@
     const editPanel = node.querySelector(".task-edit");
     const editTitle = node.querySelector(".edit-title");
     const editLink = node.querySelector(".edit-link");
+    const editCategorySelect = node.querySelector(".edit-category-select");
     const editCategory = node.querySelector(".edit-category");
     const editNote = node.querySelector(".edit-note");
+
+    wireCategoryPicker(editCategorySelect, editCategory);
 
     node.querySelector(".task-title-row").addEventListener("click", () => editBtn.click());
 
@@ -219,7 +259,8 @@
       }
       editTitle.value = task.title;
       editLink.value = task.link || "";
-      editCategory.value = task.category || "";
+      fillCategorySelect(editCategorySelect, allCategories(), task.category || "");
+      syncNewCategoryInput(editCategorySelect, editCategory);
       editNote.value = task.note || "";
       editPanel.hidden = false;
       editTitle.focus();
@@ -238,7 +279,7 @@
       updateTask(task.id, {
         title: newTitle,
         link: editLink.value.trim(),
-        category: editCategory.value.trim(),
+        category: readCategory(editCategorySelect, editCategory),
         note: editNote.value.trim(),
       });
     });
@@ -332,10 +373,11 @@
     const id = addTask({
       title,
       link: els.linkInput.value.trim(),
-      category: els.categoryInput.value.trim(),
+      category: readCategory(els.categorySelect, els.categoryInput),
       note: els.noteInput.value.trim(),
     });
     els.form.reset();
+    syncNewCategoryInput(els.categorySelect, els.categoryInput);
     // Close the phone keyboard so the new item isn't hidden behind it.
     if (document.activeElement) document.activeElement.blur();
     const added = els.taskList.querySelector(`[data-id="${id}"]`);
@@ -345,6 +387,7 @@
     }
   });
 
+  wireCategoryPicker(els.categorySelect, els.categoryInput);
   els.clearDoneBtn.addEventListener("click", clearDone);
   els.statusFilter.addEventListener("change", render);
   els.categoryFilter.addEventListener("change", render);

@@ -45,6 +45,11 @@
   box-sizing: border-box;
 }
 
+/* Author display rules (e.g. .task-edit) would otherwise override the hidden attribute. */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -84,6 +89,17 @@ body {
 .add-form-row {
   display: flex;
   gap: 10px;
+}
+
+.add-form-row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.category-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 input, textarea, select {

@@ -21,8 +21,10 @@
     <input type="text" id="title-input" placeholder="What do you want to remember? (e.g. 'Article on benzodiazepines')" required maxlength="200" />
     <div class="add-form-row">
       <input type="url" id="link-input" placeholder="Link (optional)" />
-      <input type="text" id="category-input" list="category-options" placeholder="Category" />
-      <datalist id="category-options"></datalist>
+      <div class="category-field">
+        <select id="category-select" aria-label="Category"></select>
+        <input type="text" id="category-input" placeholder="New category name" maxlength="40" hidden />
+      </div>
     </div>
     <textarea id="note-input" placeholder="Note (optional)" rows="2" maxlength="2000"></textarea>
     <button type="submit" class="btn-primary">➕ Save</button>
@@ -72,7 +74,8 @@
       <div class="task-edit" hidden>
         <input type="text" class="edit-title" maxlength="200" />
         <input type="url" class="edit-link" placeholder="Link" />
-        <input type="text" class="edit-category" placeholder="Category" />
+        <select class="edit-category-select" aria-label="Category"></select>
+        <input type="text" class="edit-category" placeholder="New category name" maxlength="40" hidden />
         <textarea class="edit-note" placeholder="Note" rows="2" maxlength="2000"></textarea>
         <div class="edit-actions">
           <button type="button" class="btn-primary save-edit-btn">Save</button>
